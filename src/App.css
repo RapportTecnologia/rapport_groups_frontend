@@ -47,16 +47,27 @@
   margin-bottom: 10px;
 }
 
-/* Botão de próxima página */
+/* Controles de paginação */
+.pagination-controls {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.previous-page,
 .next-page {
-  display: block;
-  margin: 20px auto;
+  margin: 5px;
   padding: 10px 20px;
   background-color: #28a745;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.previous-page:disabled,
+.next-page:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 /* Estilo da coluna de publicidade */
@@ -84,4 +95,34 @@
   cursor: pointer;
   display: block;
   margin: 20px auto;
+}
+/* Botão de rolar para o topo */
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  display: none; /* Escondido por padrão */
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Exibe o botão quando a classe 'visible' é adicionada */
+.scroll-to-top.visible {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Efeito de hover para o botão */
+.scroll-to-top:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
 }

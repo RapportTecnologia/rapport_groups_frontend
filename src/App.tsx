@@ -7,11 +7,16 @@ import './App.css';
 const App: React.FC = () => {
   return (
     <div className="App">
-      <div className="main-content">
+      <div className="content-wrapper">
+        {/* Listagem de grupos no centro */}
         <GroupList />
-        <ScrollToTopButton />
+
+        {/* Área de publicidade à direita */}
+        <AdSense />
       </div>
-      <AdSense />
+      
+      {/* Botão para retornar ao topo */}
+      <ScrollToTopButton />
     </div>
   );
 }
