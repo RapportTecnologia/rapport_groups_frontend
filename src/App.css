@@ -1,38 +1,87 @@
+/* Estilos gerais */
 .App {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 80%; /* A largura total da área centralizada */
+}
+
+/* Listagem de grupos */
+.group-list {
+  flex: 3; /* A maior parte da largura é dedicada à listagem de grupos */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Duas colunas */
+  gap: 20px;
+  padding-right: 20px;
+}
+
+/* Estilo dos itens do grupo */
+.group-item {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.group-item img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.no-image-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+/* Botão de próxima página */
+.next-page {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Estilo da coluna de publicidade */
+.adsense-column {
+  flex: 1; /* Menor espaço, dedicado à publicidade */
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-left: 1px solid #ddd;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.adsense-column h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Botão de rolar para o topo */
+.scroll-to-top {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #007bff;
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
 }
