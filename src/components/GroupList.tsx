@@ -1,37 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
 
-// Definindo a interface para o tipo de dado Group
 interface Group {
   id: number;
   name: string;
   description: string;
-  image: string | null; // Base64 da imagem ou null
-  invitation_code: string; // Código de convite para o grupo
+  image: string | null;
+  invitation_code: string;
 }
 
 const GroupList: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [hasMoreGroups, setHasMoreGroups] = useState<boolean>(true); // Para verificar se há mais páginas
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [inviteUrl, setInviteUrl] = useState<string>('');
+  const [groupDescription, setGroupDescription] = useState<string>('');
 
   useEffect(() => {
-    loadGroups(page);
-  }, [page]);
+    if (searchTerm.length >= 3) {
+      searchGroups(searchTerm);
+    } else {
+      loadGroups(page);
+    }
+  }, [searchTerm, page]);
 
   const loadGroups = (page: number) => {
-    const apiUrl = process.env.REACT_APP_API_URL; // Obtém a URL da API do .env
+    const apiUrl = process.env.REACT_APP_API_URL;
     $.ajax({
-      url: `${apiUrl}/groups?page=${page}`, // Usa a URL da API do .env
+      url: `${apiUrl}/groups?page=${page}`,
       method: 'GET',
       success: (data: { groups: Group[] }) => {
         setGroups(data.groups);
-        // Verifica se há mais grupos para a próxima página
-        if (data.groups.length < 40) {
-          setHasMoreGroups(false); // Se menos de 40 grupos forem retornados, não há mais páginas
-        } else {
-          setHasMoreGroups(true); // Caso contrário, ainda há mais páginas para navegar
-        }
       },
       error: (err) => {
         console.error('Error fetching groups:', err);
@@ -39,19 +38,77 @@ const GroupList: React.FC = () => {
     });
   };
 
-  const handleNextPage = () => {
-    setPage(page + 1);
+  const searchGroups = (query: string) => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+    $.ajax({
+      url: `${apiUrl}/groups/search?query=${encodeURIComponent(query)}`,
+      method: 'GET',
+      success: (data: { groups: Group[] }) => {
+        setGroups(data.groups);
+      },
+      error: (err) => {
+        console.error('Error searching groups:', err);
+      }
+    });
   };
 
-  const handlePreviousPage = () => {
-    setPage(page - 1);
+  const handleAddGroup = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const invitationCode = inviteUrl.split('/').pop();
+
+    $.ajax({
+      url: `${apiUrl}/groups`,
+      method: 'POST',
+      data: JSON.stringify({
+        invitation_code: invitationCode,
+        description: groupDescription
+      }),
+      contentType: 'application/json',
+      success: () => {
+        alert('Grupo adicionado com sucesso!');
+        setInviteUrl('');
+        setGroupDescription('');
+        loadGroups(page);
+      },
+      error: (err) => {
+        const errorMessage = err.responseJSON?.error || 'Erro ao adicionar o grupo.';
+        alert(errorMessage);
+      }
+    });
   };
+
+  const handleNextPage = () => setPage(page + 1);
+  const handlePreviousPage = () => setPage(page > 1 ? page - 1 : 1);
 
   return (
     <div className="group-list">
+      <input
+        type="text"
+        placeholder="Pesquisar grupos..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-input"
+      />
+
+      <div className="add-group-form">
+        <input
+          type="text"
+          placeholder="URL de convite do WhatsApp"
+          value={inviteUrl}
+          onChange={(e) => setInviteUrl(e.target.value)}
+          className="invite-url-input"
+        />
+        <textarea
+          placeholder="Descrição do grupo"
+          value={groupDescription}
+          onChange={(e) => setGroupDescription(e.target.value)}
+          className="group-description-input"
+        ></textarea>
+        <button onClick={handleAddGroup}>Adicionar Grupo</button>
+      </div>
+
       {groups.map((group) => (
         <div key={group.id} className="group-item">
-          {/* Exibir a imagem apenas se estiver disponível */}
           {group.image ? (
             <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
           ) : (
@@ -67,24 +124,11 @@ const GroupList: React.FC = () => {
       ))}
 
       <div className="pagination-controls">
-        {/* Botão para página anterior, desabilitado se for a primeira página */}
-        <button 
-          className="previous-page" 
-          onClick={handlePreviousPage} 
-          disabled={page === 1}>
-          Página Anterior
-        </button>
-
-        {/* Botão para próxima página, desabilitado se não houver mais páginas */}
-        <button 
-          className="next-page" 
-          onClick={handleNextPage} 
-          disabled={!hasMoreGroups}>
-          Próxima Página
-        </button>
+        <button className="previous-page" onClick={handlePreviousPage} disabled={page === 1}>Página Anterior</button>
+        <button className="next-page" onClick={handleNextPage}>Próxima Página</button>
       </div>
     </div>
   );
-}
+};
 
 export default GroupList;
