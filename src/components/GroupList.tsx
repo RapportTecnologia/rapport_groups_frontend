@@ -111,7 +111,7 @@ const GroupList: React.FC = () => {
 
   const handleCategorySelect = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
-    setPage(1); // Resetar para a primeira página
+    setPage(1);
   };
 
   const handleNextPage = () => {
@@ -124,30 +124,32 @@ const GroupList: React.FC = () => {
 
   return (
     <div className="group-list">
-      {/* Botões de categorias */}
-      <div className="category-buttons">
-        <button onClick={() => handleCategorySelect(null)} className={selectedCategory === null ? 'selected' : ''}>
-          Todos
-        </button>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => handleCategorySelect(category.id)}
-            className={selectedCategory === category.id ? 'selected' : ''}
-          >
-            {category.name}
+      {/* Botões de categorias e campo de pesquisa */}
+      <div className="filter-container">
+        <div className="categories">
+          <button onClick={() => handleCategorySelect(null)} className={selectedCategory === null ? 'selected' : ''}>
+            Todos
           </button>
-        ))}
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={selectedCategory === category.id ? 'selected' : ''}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Pesquisar grupos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
       </div>
-
-      {/* Campo de pesquisa */}
-      <input
-        type="text"
-        placeholder="Pesquisar grupos..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input"
-      />
 
       {/* Formulário para adicionar novo grupo */}
       <div className="add-group-form">
