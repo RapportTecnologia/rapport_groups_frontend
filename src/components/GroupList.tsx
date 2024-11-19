@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
+import AddGroupForm from './AddGroupForm';
+import AdSense from './AdSense';
 
 interface Group {
   id: number;
@@ -21,14 +23,13 @@ const GroupList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalGroups, setTotalGroups] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [inviteUrl, setInviteUrl] = useState<string>('');
-  const [groupDescription, setGroupDescription] = useState<string>('');
 
   const groupsPerPage = 40;
   const totalPages = Math.ceil(totalGroups / groupsPerPage);
 
   useEffect(() => {
     fetchCategories();
+    loadGroups(page, selectedCategory);
   }, []);
 
   useEffect(() => {
@@ -45,11 +46,12 @@ const GroupList: React.FC = () => {
       url: `${apiUrl}/categories`,
       method: 'GET',
       success: (data: { categories: Category[] }) => {
-        setCategories(data.categories);
+        setCategories(data.categories || []);
       },
       error: (err) => {
         console.error('Error fetching categories:', err);
-      }
+        setCategories([]);
+      },
     });
   };
 
@@ -59,13 +61,14 @@ const GroupList: React.FC = () => {
     $.ajax({
       url: `${apiUrl}/groups?page=${page}${categoryParam}`,
       method: 'GET',
-      success: (data: { groups: Group[], total: number }) => {
-        setGroups(data.groups);
-        setTotalGroups(data.total);
+      success: (data: { groups: Group[]; total: number }) => {
+        setGroups(data.groups || []);
+        setTotalGroups(data.total || 0);
       },
       error: (err) => {
         console.error('Error fetching groups:', err);
-      }
+        setGroups([]);
+      },
     });
   };
 
@@ -74,38 +77,14 @@ const GroupList: React.FC = () => {
     $.ajax({
       url: `${apiUrl}/groups/search?query=${encodeURIComponent(query)}`,
       method: 'GET',
-      success: (data: { groups: Group[], total: number }) => {
-        setGroups(data.groups);
-        setTotalGroups(data.total);
+      success: (data: { groups: Group[]; total: number }) => {
+        setGroups(data.groups || []);
+        setTotalGroups(data.total || 0);
       },
       error: (err) => {
         console.error('Error searching groups:', err);
-      }
-    });
-  };
-
-  const handleAddGroup = () => {
-    const apiUrl = process.env.REACT_APP_API_URL;
-    const invitationCode = inviteUrl.split('/').pop();
-
-    $.ajax({
-      url: `${apiUrl}/groups`,
-      method: 'POST',
-      data: JSON.stringify({
-        invitation_code: invitationCode,
-        description: groupDescription
-      }),
-      contentType: 'application/json',
-      success: () => {
-        alert('Grupo adicionado com sucesso!');
-        setInviteUrl('');
-        setGroupDescription('');
-        loadGroups(page, selectedCategory);
+        setGroups([]);
       },
-      error: (err) => {
-        const errorMessage = err.responseJSON?.error || 'Erro ao adicionar o grupo.';
-        alert(errorMessage);
-      }
     });
   };
 
@@ -122,79 +101,93 @@ const GroupList: React.FC = () => {
     if (page > 1) setPage(page - 1);
   };
 
-  return (
-    <div className="group-list">
-      {/* Botões de categorias */}
-      <div className="categories">
-        <button onClick={() => handleCategorySelect(null)} className={selectedCategory === null ? 'selected' : ''}>
-          Todos
-        </button>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => handleCategorySelect(category.id)}
-            className={selectedCategory === category.id ? 'selected' : ''}
-          >
-            {category.name}
-          </button>
+  const handlePageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPage(Number(event.target.value));
+  };
+
+  const renderPaginationControls = (position: 'top' | 'bottom') => (
+    <div className={`pagination-controls pagination-${position}`}>
+      <button className="previous-page" onClick={handlePreviousPage} disabled={page === 1}>
+        Página Anterior
+      </button>
+      <select className="page-select" value={page} onChange={handlePageSelect}>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <option key={i + 1} value={i + 1}>
+            Página {i + 1}
+          </option>
         ))}
-      </div>
+      </select>
+      <button className="next-page" onClick={handleNextPage} disabled={page >= totalPages}>
+        Próxima Página
+      </button>
+      <span className="total-groups">
+        {`Exibindo ${groups.length} de ${totalGroups} grupos`}
+      </span>
+    </div>
+  );
 
-      {/* Campo de pesquisa */}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Pesquisar grupos..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-      </div>
+  return (
+    <div className="app-container">
+      <div className="main-column">
+        <div className="filter-container">
+          <div className="categories">
+            {categories && categories.length > 0 ? (
+              categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategorySelect(category.id)}
+                  className={selectedCategory === category.id ? 'selected' : ''}
+                >
+                  {category.name}
+                </button>
+              ))
+            ) : (
+              <p>Carregando categorias...</p>
+            )}
+          </div>
 
-      {/* Formulário para adicionar novo grupo */}
-      <div className="add-group-form">
-        <input
-          type="text"
-          placeholder="URL de convite do WhatsApp"
-          value={inviteUrl}
-          onChange={(e) => setInviteUrl(e.target.value)}
-          className="invite-url-input"
-        />
-        <textarea
-          placeholder="Descrição do grupo"
-          value={groupDescription}
-          onChange={(e) => setGroupDescription(e.target.value)}
-          className="group-description-input"
-        ></textarea>
-        <button onClick={handleAddGroup}>Adicionar Grupo</button>
-      </div>
-
-      {/* Exibição do total de grupos e página atual */}
-      <div className="pagination-info">
-        <p>Total de grupos: {totalGroups}</p>
-        <p>Página {page} de {totalPages}</p>
-      </div>
-
-      {/* Lista de grupos */}
-      {groups.map((group) => (
-        <div key={group.id} className="group-item">
-          {group.image ? (
-            <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
-          ) : (
-            <div className="no-image-placeholder">Imagem não disponível</div>
-          )}
-          <h3>
-            <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
-              {group.name}
-            </a>
-          </h3>
-          <p>{group.description}</p>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Pesquisar grupos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
         </div>
-      ))}
 
-      <div className="pagination-controls">
-        <button className="previous-page" onClick={handlePreviousPage} disabled={page === 1}>Página Anterior</button>
-        <button className="next-page" onClick={handleNextPage} disabled={page >= totalPages}>Próxima Página</button>
+        <AddGroupForm onGroupAdded={() => loadGroups(page, selectedCategory)} />
+
+        {renderPaginationControls('top')}
+
+        <div className="group-list">
+        {groups && groups.length > 0 ? (
+          groups.map((group) => (
+            <div key={group.id} className="group-item">
+              {group.image ? (
+                <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
+              ) : (
+                <div className="no-image-placeholder">Imagem não disponível</div>
+              )}
+              <h3>
+                <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
+                  {group.name}
+                </a>
+              </h3>
+              <p>{group.description}</p>
+            </div>
+          ))
+        ) : (
+          <p>Nenhum grupo encontrado.</p>
+        )}
+      </div>
+
+        {renderPaginationControls('bottom')}
+      </div>
+
+      <div className="ad-column">
+        <AdSense />
       </div>
     </div>
   );
