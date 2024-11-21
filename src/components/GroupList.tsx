@@ -9,6 +9,7 @@ interface Group {
   description: string;
   image: string | null;
   invitation_code: string;
+  keywords: string; // Palavras-chave retornadas como string separada por vírgulas
 }
 
 interface Category {
@@ -23,6 +24,8 @@ const GroupList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalGroups, setTotalGroups] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const groupsPerPage = 40;
   const totalPages = Math.ceil(totalGroups / groupsPerPage);
@@ -38,7 +41,7 @@ const GroupList: React.FC = () => {
     } else {
       loadGroups(page, selectedCategory);
     }
-  }, [searchTerm, page, selectedCategory]);
+  }, [searchTerm, page, selectedCategory, selectedKeyword]);
 
   const fetchCategories = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -56,6 +59,7 @@ const GroupList: React.FC = () => {
   };
 
   const loadGroups = (page: number, categoryId: number | null = null) => {
+    setIsLoading(true); // Inicia o indicador de carregamento
     const apiUrl = process.env.REACT_APP_API_URL;
     const categoryParam = categoryId ? `&category_id=${categoryId}` : '';
     $.ajax({
@@ -69,6 +73,9 @@ const GroupList: React.FC = () => {
         console.error('Error fetching groups:', err);
         setGroups([]);
       },
+      complete: () => {
+        setIsLoading(false); // Finaliza o indicador de carregamento
+      }
     });
   };
 
@@ -85,9 +92,29 @@ const GroupList: React.FC = () => {
         console.error('Error searching groups:', err);
         setGroups([]);
       },
+    })
+  }
+  const searchGroupsByKeyword = (keyword: string) => {
+    setIsLoading(true); // Inicia o indicador de carregamento
+    const apiUrl = process.env.REACT_APP_API_URL;
+    $.ajax({
+      url: `${apiUrl}/groups/search?keyword=${encodeURIComponent(keyword)}`,
+      method: 'GET',
+      success: (data: { groups: Group[] }) => {
+        setGroups(data.groups || []);
+        setTotalGroups(data.groups.length || 0);
+        setSelectedKeyword(keyword);
+      },
+      error: (err) => {
+        console.error('Error searching groups by keyword:', err);
+        setGroups([]);
+      },
+      complete: () => {
+        setIsLoading(false); // Finaliza o indicador de carregamento
+      }
     });
   };
-
+  
   const handleCategorySelect = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
     setPage(1);
@@ -104,6 +131,34 @@ const GroupList: React.FC = () => {
   const handlePageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPage(Number(event.target.value));
   };
+
+  const renderKeywords = (keywords: string | undefined) => {
+    // Verifica se keywords é undefined, nulo ou vazio
+    if (!keywords || keywords.trim() === '') {
+      return null; // Não renderiza nada se as keywords não existirem
+    }
+  
+    // Divide as keywords em uma lista e remove strings vazias ou apenas espaços
+    return keywords
+      .split(',')
+      .filter((keyword) => keyword.trim() !== '') // Remove espaços ou keywords vazias
+      .map((keyword, index) => (
+        <span key={index} className="keyword-label" onClick={() => handleKeywordClick(keyword)}>
+          {keyword}
+        </span>
+      ));
+  };
+
+  const handleKeywordClick = (keyword: string) => {
+    // Limpa filtros anteriores
+    setSelectedCategory(null); // Desseleciona a categoria
+    setSearchTerm(''); // Limpa o termo de pesquisa
+    setPage(1); // Reinicia para a primeira página
+  
+    // Realiza a pesquisa de grupos pela keyword
+    searchGroupsByKeyword(keyword);
+  };
+  
 
   const renderPaginationControls = (position: 'top' | 'bottom') => (
     <div className={`pagination-controls pagination-${position}`}>
@@ -135,7 +190,10 @@ const GroupList: React.FC = () => {
               categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => handleCategorySelect(category.id)}
+                  onClick={() => {
+                    setSelectedKeyword(null);
+                    setSelectedCategory(category.id);
+                  }}
                   className={selectedCategory === category.id ? 'selected' : ''}
                 >
                   {category.name}
@@ -161,28 +219,37 @@ const GroupList: React.FC = () => {
 
         {renderPaginationControls('top')}
 
-        <div className="group-list">
-        {groups && groups.length > 0 ? (
-          groups.map((group) => (
-            <div key={group.id} className="group-item">
-              {group.image ? (
-                <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
-              ) : (
-                <div className="no-image-placeholder">Imagem não disponível</div>
-              )}
-              <h3>
-                <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
-                  {group.name}
-                </a>
-              </h3>
-              <p>{group.description}</p>
-            </div>
-          ))
-        ) : (
-          <p>Nenhum grupo encontrado.</p>
-        )}
-      </div>
+        <div className="loading-indicator" style={{ display: isLoading ? 'block' : 'none' }}>
+          <p>Carregando...</p>
+        </div>
 
+        <div className="group-list">
+        <div className="loading-indicator" style={{ display: isLoading ? 'block' : 'none' }}>
+          <p>Carregando...</p>
+        </div>
+          {groups && groups.length > 0 ? (
+            groups.map((group) => (
+              <div key={group.id} className="group-item">
+                {group.image ? (
+                  <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
+                ) : (
+                  <div className="no-image-placeholder">Imagem não disponível</div>
+                )}
+                <h3>
+                  <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
+                    {group.name}
+                  </a>
+                </h3>
+                <p>{group.description}</p>
+                <div className="keywords-container">
+                  {renderKeywords(group.keywords)}
+                </div>
+              </div>
+            ))
+          ) : (
+            !isLoading && <p>Nenhum grupo encontrado.</p> // Exibe "Nenhum grupo encontrado" apenas se não estiver carregando
+          )}
+        </div>
         {renderPaginationControls('bottom')}
       </div>
 

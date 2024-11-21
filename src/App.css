@@ -213,3 +213,32 @@
   color: #888;
   font-size: 12px;
 }
+
+.keywords-container {
+  margin-top: 10px;
+}
+
+.keyword-label {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 2px;
+  font-size: 10px;
+  color: white;
+  background-color: #007bff;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: background-color 0.3s ease;
+}
+
+.keyword-label:hover {
+  background-color: #0056b3;
+}
+
+.loading-indicator {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin: 20px 0;
+}
