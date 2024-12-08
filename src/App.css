@@ -242,3 +242,17 @@
   color: #333;
   margin: 20px 0;
 }
+
+/* App.css Adjustments */
+@media only screen and (max-width: 600px) {
+  .content-wrapper {
+    flex-direction: column;
+    padding: 10px;
+  }
+  .group-list {
+    grid-template-columns: 1fr;
+  }
+  .ad-column {
+    margin-top: 20px;
+  }
+}
