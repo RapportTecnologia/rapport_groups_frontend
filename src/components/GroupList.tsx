@@ -33,6 +33,7 @@ const GroupList: React.FC = () => {
   useEffect(() => {
     fetchCategories();
     loadGroups(page, selectedCategory);
+    registerServiceWorker();
   }, []);
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const GroupList: React.FC = () => {
   };
 
   const loadGroups = (page: number, categoryId: number | null = null) => {
-    setIsLoading(true); // Inicia o indicador de carregamento
+    setIsLoading(true);
     const apiUrl = process.env.REACT_APP_API_URL;
     const categoryParam = categoryId ? `&category_id=${categoryId}` : '';
     $.ajax({
@@ -74,7 +75,7 @@ const GroupList: React.FC = () => {
         setGroups([]);
       },
       complete: () => {
-        setIsLoading(false); // Finaliza o indicador de carregamento
+        setIsLoading(false);
       }
     });
   };
@@ -92,10 +93,34 @@ const GroupList: React.FC = () => {
         console.error('Error searching groups:', err);
         setGroups([]);
       },
-    })
-  }
+    });
+  };
+
+  const renderKeywords = (keywords: string | undefined) => {
+    if (!keywords || keywords.trim() === '') {
+      return null;
+    }
+
+    return keywords
+      .split(',')
+      .filter((keyword) => keyword.trim() !== '')
+      .map((keyword, index) => (
+        <span key={index} className="keyword-label" onClick={() => handleKeywordClick(keyword)}>
+          {keyword}
+        </span>
+      ));
+  };
+
+  const handleKeywordClick = (keyword: string) => {
+    setSelectedCategory(null);
+    setSearchTerm('');
+    setPage(1);
+
+    searchGroupsByKeyword(keyword);
+  };
+
   const searchGroupsByKeyword = (keyword: string) => {
-    setIsLoading(true); // Inicia o indicador de carregamento
+    setIsLoading(true);
     const apiUrl = process.env.REACT_APP_API_URL;
     $.ajax({
       url: `${apiUrl}/groups/search?keyword=${encodeURIComponent(keyword)}`,
@@ -110,55 +135,10 @@ const GroupList: React.FC = () => {
         setGroups([]);
       },
       complete: () => {
-        setIsLoading(false); // Finaliza o indicador de carregamento
+        setIsLoading(false);
       }
     });
   };
-  
-  const handleCategorySelect = (categoryId: number | null) => {
-    setSelectedCategory(categoryId);
-    setPage(1);
-  };
-
-  const handleNextPage = () => {
-    if (page < totalPages) setPage(page + 1);
-  };
-
-  const handlePreviousPage = () => {
-    if (page > 1) setPage(page - 1);
-  };
-
-  const handlePageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setPage(Number(event.target.value));
-  };
-
-  const renderKeywords = (keywords: string | undefined) => {
-    // Verifica se keywords é undefined, nulo ou vazio
-    if (!keywords || keywords.trim() === '') {
-      return null; // Não renderiza nada se as keywords não existirem
-    }
-  
-    // Divide as keywords em uma lista e remove strings vazias ou apenas espaços
-    return keywords
-      .split(',')
-      .filter((keyword) => keyword.trim() !== '') // Remove espaços ou keywords vazias
-      .map((keyword, index) => (
-        <span key={index} className="keyword-label" onClick={() => handleKeywordClick(keyword)}>
-          {keyword}
-        </span>
-      ));
-  };
-
-  const handleKeywordClick = (keyword: string) => {
-    // Limpa filtros anteriores
-    setSelectedCategory(null); // Desseleciona a categoria
-    setSearchTerm(''); // Limpa o termo de pesquisa
-    setPage(1); // Reinicia para a primeira página
-  
-    // Realiza a pesquisa de grupos pela keyword
-    searchGroupsByKeyword(keyword);
-  };
-  
 
   const renderPaginationControls = (position: 'top' | 'bottom') => (
     <div className={`pagination-controls pagination-${position}`}>
@@ -181,9 +161,48 @@ const GroupList: React.FC = () => {
     </div>
   );
 
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handlePageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPage(Number(event.target.value));
+  };
+
+  const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(
+          (registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          },
+          (error) => {
+            console.error('Service Worker registration failed:', error);
+          }
+        );
+      });
+    }
+  };
+
   return (
     <div className="app-container">
       <div className="main-column">
+        <h1>Rapport Groups</h1>
+        <p className="page-description">
+          Bem-vindo ao Rapport Groups! Este espaço foi criado para conectar administradores de grupos com aqueles que estão procurando a comunidade perfeita para interagir. Divulgue seu grupo e ajude a formar conexões valiosas.
+        </p>
+
+        <div className="group-info">
+          <p>Nosso grupo no WhatsApp: <a href="https://chat.whatsapp.com/LV9aswOWeiaJbX0z3kxQ9j" target="_blank" rel="noopener noreferrer">Clique aqui para acessar</a></p>
+          <p>Você também pode enviar seu link de convite de grupo para o número: <a href="https://whatsa.me/5585991257722/?t=Cadastre%20meu%20grupo%20por%20favor%20na%20categoria%20%3Csubstitua%20pela%20categoria%3E,%20o%20link%20de%20convite%20%C3%A9%20%3Ccoloque%20aqui%20o%20link%20de%20convite%20do%20seu%20grupo%3E." target="_blank" rel="noopener noreferrer">+55 85 99125-7722</a></p>
+        </div>
+
+        <AddGroupForm onGroupAdded={() => loadGroups(page, selectedCategory)} />
+
         <div className="filter-container">
           <div className="categories">
             {categories && categories.length > 0 ? (
@@ -215,8 +234,6 @@ const GroupList: React.FC = () => {
           </div>
         </div>
 
-        <AddGroupForm onGroupAdded={() => loadGroups(page, selectedCategory)} />
-
         {renderPaginationControls('top')}
 
         <div className="loading-indicator" style={{ display: isLoading ? 'block' : 'none' }}>
@@ -224,9 +241,6 @@ const GroupList: React.FC = () => {
         </div>
 
         <div className="group-list">
-        <div className="loading-indicator" style={{ display: isLoading ? 'block' : 'none' }}>
-          <p>Carregando...</p>
-        </div>
           {groups && groups.length > 0 ? (
             groups.map((group) => (
               <div key={group.id} className="group-item">
@@ -247,9 +261,10 @@ const GroupList: React.FC = () => {
               </div>
             ))
           ) : (
-            !isLoading && <p>Nenhum grupo encontrado.</p> // Exibe "Nenhum grupo encontrado" apenas se não estiver carregando
+            !isLoading && <p>Nenhum grupo encontrado.</p>
           )}
         </div>
+
         {renderPaginationControls('bottom')}
       </div>
 
