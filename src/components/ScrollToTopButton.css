@@ -1,0 +1,103 @@
+.scroll-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease, background 0.3s ease;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(100px);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, visibility 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+  background: linear-gradient(135deg, #F7931E 0%, #FF6B35 100%);
+}
+
+.scroll-to-top:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.scroll-icon {
+  width: 24px;
+  height: 24px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Pausar animação ao passar o mouse */
+.scroll-to-top:hover .scroll-icon {
+  animation: none;
+}
+
+/* Responsive adjustments */
+@media only screen and (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+
+  .scroll-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .scroll-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .scroll-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Garantir que o botão fique acima do chat Tawk.to */
+.scroll-to-top {
+  z-index: 999;
+}
+
+/* Ajustar posição quando há widget de chat */
+@media only screen and (max-width: 768px) {
+  .scroll-to-top.visible {
+    bottom: 5rem; /* Evitar sobreposição com chat mobile */
+  }
+}

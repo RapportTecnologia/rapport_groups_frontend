@@ -35,6 +35,7 @@ const GroupList: React.FC = () => {
     fetchCategories();
     loadGroups(page, selectedCategory);
     registerServiceWorker();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

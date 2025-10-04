@@ -23,6 +23,7 @@ const AdsBanner: React.FC<AdsBannerProps> = ({ count = 2 }) => {
    */
   useEffect(() => {
     loadAds();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
