@@ -1,8 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import GroupList from './components/GroupList';
-import AdSense from './components/AdSense';
 import ScrollToTopButton from './components/ScrollToTopButton';
+import Footer from './components/Footer';
 import './App.css';
 
 const App: React.FC = () => {
@@ -30,6 +30,7 @@ const App: React.FC = () => {
         <div className="app-container">
           <GroupList />
         </div>
+        <Footer />
         <ScrollToTopButton />
       </div>
     </>
