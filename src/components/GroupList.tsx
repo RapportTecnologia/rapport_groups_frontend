@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
 import AddGroupForm from './AddGroupForm';
 import Modal from './Modal';
-import AdSense from './AdSense';
 import AdsBanner from './AdsBanner';
 
 interface Group {
@@ -19,6 +18,12 @@ interface Category {
   name: string;
 }
 
+interface Ad {
+  titulo: string;
+  link: string;
+  imagePath: string;
+}
+
 const GroupList: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -29,6 +34,7 @@ const GroupList: React.FC = () => {
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [ads, setAds] = useState<Ad[]>([]);
 
   const groupsPerPage = 40;
   const totalPages = Math.ceil(totalGroups / groupsPerPage);
@@ -36,6 +42,7 @@ const GroupList: React.FC = () => {
   useEffect(() => {
     fetchCategories();
     loadGroups(page, selectedCategory);
+    loadAds();
     registerServiceWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -59,6 +66,24 @@ const GroupList: React.FC = () => {
       error: (err) => {
         console.error('Error fetching categories:', err);
         setCategories([]);
+      },
+    });
+  };
+
+  const loadAds = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+    $.ajax({
+      url: `${apiUrl}/ads?count=10`,
+      method: 'GET',
+      success: (data: { success: boolean; data: { ads: Ad[] } }) => {
+        if (data.success && data.data.ads) {
+          setAds(data.data.ads);
+          console.log('✅ Anúncios carregados:', data.data.ads.length);
+        }
+      },
+      error: (err) => {
+        console.error('❌ Erro ao carregar anúncios:', err);
+        setAds([]);
       },
     });
   };
@@ -271,9 +296,9 @@ const GroupList: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Insere anúncios a cada 6 grupos */}
-                {(index + 1) % 6 === 0 && (
-                  <AdsBanner count={2} />
+                {/* Insere anúncio a cada 6 grupos */}
+                {(index + 1) % 6 === 0 && ads.length > 0 && (
+                  <AdsBanner ad={ads[Math.floor(index / 6) % ads.length]} />
                 )}
               </React.Fragment>
             ))
@@ -283,25 +308,21 @@ const GroupList: React.FC = () => {
         </div>
 
         {renderPaginationControls('bottom')}
-      </div>
 
-      <div className="ad-column">
-        <AdSense />
+        {/* Modal de Cadastro */}
+        <Modal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)}
+          title="Cadastrar Novo Grupo"
+        >
+          <AddGroupForm 
+            onGroupAdded={() => {
+              loadGroups(page, selectedCategory);
+              setIsModalOpen(false);
+            }} 
+          />
+        </Modal>
       </div>
-
-      {/* Modal de Cadastro */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
-        title="Cadastrar Novo Grupo"
-      >
-        <AddGroupForm 
-          onGroupAdded={() => {
-            loadGroups(page, selectedCategory);
-            setIsModalOpen(false);
-          }} 
-        />
-      </Modal>
     </div>
   );
 };

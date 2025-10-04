@@ -176,21 +176,49 @@
 
 .search-container {
   width: 100%;
+  position: relative;
+}
+
+.search-container::before {
+  content: '🔍';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.search-container:focus-within::before {
+  opacity: 1;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid rgba(59, 130, 246, 0.3);
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 3px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #3B82F6 0%, #FF6B35 100%) border-box;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3),
+              0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+  color: #999;
+  font-weight: 400;
 }
 
 /* Lista de Grupos */
@@ -203,18 +231,39 @@
 
 .group-item {
   background: white;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
   padding: 1.5rem;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.group-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .group-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2);
-  border-color: rgba(255, 107, 53, 0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25),
+              0 0 20px rgba(255, 107, 53, 0.15);
+  border-color: rgba(255, 107, 53, 0.6);
+}
+
+.group-item:hover::before {
+  opacity: 1;
 }
 
 .group-item img {
@@ -225,23 +274,34 @@
   margin: 0 auto 1rem;
   display: block;
   border: 3px solid rgba(59, 130, 246, 0.3);
-  transition: border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
 }
 
 .group-item:hover img {
-  border-color: rgba(255, 107, 53, 0.6);
+  border-color: rgba(255, 107, 53, 0.8);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
 .group-item h3 {
   margin: 1rem 0 0.5rem;
-  font-size: 1.2rem;
-  color: #333;
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.group-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
 .group-item h3 a {
-  color: #333;
+  color: #1a1a1a;
   text-decoration: none;
   transition: color 0.3s ease;
+  font-weight: 700;
 }
 
 .group-item h3 a:hover {
@@ -249,10 +309,14 @@
 }
 
 .group-item p {
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.5;
-  margin: 0.5rem 0;
+  color: #2d2d2d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.group-item:hover p {
+  color: #1a1a1a;
 }
 
 /* Controles de Paginação */
@@ -285,30 +349,6 @@
   background: #ccc;
 }
 
-/* Coluna de Publicidade */
-.ad-column {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 1.5rem;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 2rem;
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
-}
-
-.adsense-container {
-  margin: 1rem 0;
-}
-
-.adsense-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #333;
-  text-align: center;
-}
 
 /* Estilo para os campos de formulário */
 .add-group-form {
@@ -399,17 +439,30 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
+  margin: 0 auto 1rem;
   color: #888;
   font-size: 12px;
+  border: 3px solid rgba(59, 130, 246, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.group-item:hover .no-image-placeholder {
+  border-color: rgba(255, 107, 53, 0.8);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
 }
 
 .keywords-container {
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .keyword-label {
@@ -422,11 +475,17 @@
   border-radius: 12px;
   cursor: pointer;
   text-transform: capitalize;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .keyword-label:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.group-item:hover .keyword-label {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
 }
 
 .loading-indicator {
@@ -482,11 +541,6 @@
   
   .group-list {
     grid-template-columns: 1fr;
-  }
-  
-  .ad-column {
-    position: static;
-    margin-top: 2rem;
   }
   
   .pagination-controls {

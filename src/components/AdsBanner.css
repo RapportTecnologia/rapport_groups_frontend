@@ -1,177 +1,120 @@
-.ads-banner {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  grid-column: 1 / -1; /* Ocupa toda a largura do grid */
-}
-
-.ads-title {
-  text-align: center;
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.ads-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.ad-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 140, 66, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.ad-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 140, 66, 0.6);
-  box-shadow: 0 8px 16px rgba(255, 140, 66, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.ad-card.loading {
-  pointer-events: none;
-}
-
-.ad-card-header {
+/* Card de anúncio - usa mesmas classes do group-item */
+.ad-item {
+  position: relative;
+  background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+  border-color: rgba(255, 140, 66, 0.3) !important;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
+  flex-direction: column;
+  min-height: 400px;
 }
 
-.ad-card-title {
-  color: #fff;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-  flex: 1;
-  transition: color 0.3s ease;
+.ad-item:hover {
+  border-color: rgba(255, 140, 66, 0.6) !important;
+  box-shadow: 0 8px 16px rgba(255, 140, 66, 0.2);
+  background: linear-gradient(135deg, #FFEEDD 0%, #FFE0BB 100%);
 }
 
-.ad-card:hover .ad-card-title {
-  color: #ff8c42;
+.ad-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #FF8C42;
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.ad-card-icon {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-}
-
-.ad-card:hover .ad-card-icon {
-  color: #ff8c42;
-  transform: translate(2px, -2px);
-}
-
-.ad-card-image-wrapper {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 140, 66, 0.2);
-}
-
-.ad-card-image {
+.ad-item img,
+.ad-image {
   width: 100%;
-  height: 150px;
+  height: 50%;
+  min-height: 180px;
+  max-height: 200px;
+  border-radius: 8px 8px 0 0;
   object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.ad-card:hover .ad-card-image {
-  transform: scale(1.05);
-}
-
-.ads-empty {
-  text-align: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 140, 66, 0.2);
-}
-
-.ads-empty p {
-  color: rgba(255, 255, 255, 0.6);
   margin: 0;
+  display: block;
+  border: none;
+  background: #f5f5f5;
+  flex-shrink: 0;
 }
 
-/* Loading shimmer effect */
-.loading-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+.ad-item h3 {
+  color: #1a1a1a !important;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 1rem 1rem 0.5rem 1rem;
+  padding: 0;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.ad-item h3 a {
+  color: #1a1a1a !important;
 }
 
-.ad-card-title.loading-shimmer {
-  height: 1.2rem;
-  border-radius: 4px;
-  margin-bottom: 0.75rem;
+.ad-description {
+  color: #4a4a4a !important;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 500;
+  margin: 0 1rem;
+  padding: 0;
 }
 
-.ad-card-image.loading-shimmer {
-  height: 150px;
-  border-radius: 6px;
+.ad-cta {
+  margin: auto 1rem 1rem 1rem;
+  padding: 0.85rem;
+  background: #FF8C42;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
 }
 
-/* Responsive adjustments */
+.ad-item:hover .ad-cta {
+  background: #FF7A2E;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .ads-banner {
-    padding: 1rem;
-    margin: 1rem 0;
+  .ad-item {
+    min-height: 350px;
   }
 
-  .ads-title {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+  .ad-item img,
+  .ad-image {
+    height: 45%;
+    min-height: 140px;
   }
 
-  .ads-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .ad-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
   }
 
-  .ad-card-image {
-    height: 120px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ads-title {
-    font-size: 1.1rem;
+  .ad-item h3 {
+    font-size: 1.15rem;
+    margin: 0.75rem 0.75rem 0.5rem 0.75rem;
   }
 
-  .ad-card {
-    padding: 0.75rem;
-  }
-
-  .ad-card-title {
+  .ad-description {
     font-size: 0.9rem;
+    margin: 0 0.75rem;
+  }
+
+  .ad-cta {
+    margin: auto 0.75rem 0.75rem 0.75rem;
+    padding: 0.75rem;
   }
 }
