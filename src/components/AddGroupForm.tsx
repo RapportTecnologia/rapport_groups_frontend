@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
+import './AddGroupForm.css';
 
 interface AddGroupFormProps {
   onGroupAdded: () => void;
@@ -99,39 +100,61 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ onGroupAdded }) => {
 
   return (
     <div className="add-group-form">
-      <input
-        type="text"
-        placeholder="Nome do Grupo"
-        value={groupName}
-        onChange={(e) => setGroupName(e.target.value)}
-        className="group-name-input"
-      />
-      <div className="phone-container">
-        <select
-          value={countryCode}
-          onChange={(e) => setCountryCode(e.target.value)}
-          className="country-code-select"
-        >
-          {countryCodes.map((country) => (
-            <option key={country.code} value={country.code}>
-              {country.flag} {country.short} ({country.code})
-            </option>
-          ))}
-        </select>
+      <div className="form-group">
+        <label htmlFor="groupName" className="form-label">
+          <span className="label-icon">📱</span>
+          Nome do Grupo
+        </label>
         <input
+          id="groupName"
           type="text"
-          placeholder="Telefone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="phone-input"
-          title="Telefone de quem cadastra o grupo ou do Administrador"
+          placeholder="Ex: Grupo de Tecnologia"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          className="form-input"
         />
       </div>
-      <div className="category-container">
+
+      <div className="form-group">
+        <label htmlFor="phone" className="form-label">
+          <span className="label-icon">📞</span>
+          Telefone do Administrador
+        </label>
+        <div className="phone-container">
+          <select
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value)}
+            className="country-code-select"
+          >
+            {countryCodes.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.flag} {country.short} ({country.code})
+              </option>
+            ))}
+          </select>
+          <input
+            id="phone"
+            type="text"
+            placeholder="85912345678"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="phone-input"
+            title="Telefone de quem cadastra o grupo ou do Administrador"
+          />
+        </div>
+        <small className="form-help">Digite apenas números, sem espaços</small>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="category" className="form-label">
+          <span className="label-icon">🏷️</span>
+          Categoria
+        </label>
         <select
+          id="category"
           value={selectedCategory || ''}
           onChange={(e) => setSelectedCategory(Number(e.target.value))}
-          className="category-select styled-select"
+          className="form-select"
         >
           <option value="" disabled>
             Selecione uma categoria
@@ -143,20 +166,42 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ onGroupAdded }) => {
           ))}
         </select>
       </div>
-      <input
-        type="text"
-        placeholder="URL de convite do WhatsApp"
-        value={inviteUrl}
-        onChange={(e) => setInviteUrl(e.target.value)}
-        className="invite-url-input"
-      />
-      <textarea
-        placeholder="Descrição do grupo"
-        value={groupDescription}
-        onChange={(e) => setGroupDescription(e.target.value)}
-        className="group-description-input"
-      ></textarea>
-      <button onClick={handleAddGroup}>Adicionar Grupo</button>
+
+      <div className="form-group">
+        <label htmlFor="inviteUrl" className="form-label">
+          <span className="label-icon">🔗</span>
+          Link de Convite do WhatsApp
+        </label>
+        <input
+          id="inviteUrl"
+          type="text"
+          placeholder="https://chat.whatsapp.com/..."
+          value={inviteUrl}
+          onChange={(e) => setInviteUrl(e.target.value)}
+          className="form-input"
+        />
+        <small className="form-help">Cole o link de convite do seu grupo</small>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="description" className="form-label">
+          <span className="label-icon">📝</span>
+          Descrição do Grupo
+        </label>
+        <textarea
+          id="description"
+          placeholder="Descreva sobre o que é seu grupo, regras, temas abordados, etc."
+          value={groupDescription}
+          onChange={(e) => setGroupDescription(e.target.value)}
+          className="form-textarea"
+          rows={4}
+        ></textarea>
+      </div>
+
+      <button onClick={handleAddGroup} className="submit-button">
+        <span className="button-icon">✓</span>
+        Cadastrar Grupo
+      </button>
     </div>
   );
 };

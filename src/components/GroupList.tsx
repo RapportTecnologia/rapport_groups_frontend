@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
 import AddGroupForm from './AddGroupForm';
+import Modal from './Modal';
 import AdSense from './AdSense';
 import AdsBanner from './AdsBanner';
 
@@ -27,6 +28,7 @@ const GroupList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const groupsPerPage = 40;
   const totalPages = Math.ceil(totalGroups / groupsPerPage);
@@ -203,7 +205,13 @@ const GroupList: React.FC = () => {
           <p>Você também pode enviar seu link de convite de grupo para o número: <a href="https://whatsa.me/5585991257722/?t=Cadastre%20meu%20grupo%20por%20favor%20na%20categoria%20%3Csubstitua%20pela%20categoria%3E,%20o%20link%20de%20convite%20%C3%A9%20%3Ccoloque%20aqui%20o%20link%20de%20convite%20do%20seu%20grupo%3E." target="_blank" rel="noopener noreferrer">+55 85 99125-7722</a></p>
         </div>
 
-        <AddGroupForm onGroupAdded={() => loadGroups(page, selectedCategory)} />
+        <button className="add-group-button" onClick={() => setIsModalOpen(true)}>
+          <svg className="button-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          <span className="button-text">Cadastrar Meu Grupo</span>
+          <span className="button-badge">Grátis</span>
+        </button>
 
         <div className="filter-container">
           <div className="categories">
@@ -280,6 +288,20 @@ const GroupList: React.FC = () => {
       <div className="ad-column">
         <AdSense />
       </div>
+
+      {/* Modal de Cadastro */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        title="Cadastrar Novo Grupo"
+      >
+        <AddGroupForm 
+          onGroupAdded={() => {
+            loadGroups(page, selectedCategory);
+            setIsModalOpen(false);
+          }} 
+        />
+      </Modal>
     </div>
   );
 };

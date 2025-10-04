@@ -1,9 +1,37 @@
 .footer {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: #fff;
-  margin-top: auto;
   width: 100%;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Rodapé flutuante - aparece no início */
+.footer-floating {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+.footer-floating.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.footer-floating.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Rodapé estático - fica no final da página */
+.footer-static {
+  margin-top: auto;
+  position: relative;
 }
 
 .footer-content {
@@ -101,11 +129,21 @@
 }
 
 /* Responsive Adjustments */
+@media only screen and (max-width: 1024px) {
+  .footer-floating .footer-content {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .footer-content {
     padding: 2rem 1.5rem 1.5rem;
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+  
+  .footer-floating {
+    transition: transform 1s ease, opacity 1s ease; /* Mais lento no mobile */
   }
 
   .footer-title {

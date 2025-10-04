@@ -10,7 +10,8 @@
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 2rem 4rem;
+  padding: 2rem 2rem 2rem;
+  padding-bottom: 350px; /* Espaço para o rodapé flutuante inicial */
 }
 
 .main-column {
@@ -62,6 +63,76 @@
 
 .group-info a:hover {
   color: #FF6B35;
+}
+
+/* Botão de Cadastrar Grupo */
+.add-group-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1.25rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-group-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.add-group-button:hover::before {
+  left: 100%;
+}
+
+.add-group-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+  background: linear-gradient(135deg, #F7931E 0%, #FF6B35 100%);
+}
+
+.add-group-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+}
+
+.button-icon-svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.button-text {
+  flex: 1;
+  text-align: center;
+}
+
+.button-badge {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Categorias e Pesquisa */
@@ -398,6 +469,7 @@
 @media only screen and (max-width: 768px) {
   .app-container {
     grid-template-columns: 1fr;
+    padding-bottom: 400px; /* Mais espaço no mobile */
   }
   
   .main-column h1 {
@@ -425,6 +497,22 @@
   .pagination-controls button,
   .page-select {
     width: 100%;
+  }
+  
+  .add-group-button {
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem auto;
+  }
+  
+  .button-icon-svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .button-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
   }
 }
 
