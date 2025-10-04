@@ -20,7 +20,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf ../backend/public/static && mv -fv build/* ../backend/public/",
+    "build": "react-scripts build",
+    "deploy": "npm run build && rm -rf ../backend/public/static && cp -r build/static ../backend/public/ && cp build/index.html ../backend/public/ && cp build/asset-manifest.json ../backend/public/ && cp build/manifest.json ../backend/public/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

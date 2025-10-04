@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
 import AddGroupForm from './AddGroupForm';
 import AdSense from './AdSense';
+import AdsBanner from './AdsBanner';
 
 interface Group {
   id: number;
@@ -242,23 +243,30 @@ const GroupList: React.FC = () => {
 
         <div className="group-list">
           {groups && groups.length > 0 ? (
-            groups.map((group) => (
-              <div key={group.id} className="group-item">
-                {group.image ? (
-                  <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
-                ) : (
-                  <div className="no-image-placeholder">Imagem não disponível</div>
-                )}
-                <h3>
-                  <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
-                    {group.name}
-                  </a>
-                </h3>
-                <p>{group.description}</p>
-                <div className="keywords-container">
-                  {renderKeywords(group.keywords)}
+            groups.map((group, index) => (
+              <React.Fragment key={group.id}>
+                <div className="group-item">
+                  {group.image ? (
+                    <img src={`data:image/png;base64,${group.image}`} alt={group.name} />
+                  ) : (
+                    <div className="no-image-placeholder">Imagem não disponível</div>
+                  )}
+                  <h3>
+                    <a href={`https://chat.whatsapp.com/${group.invitation_code}`} target="_blank" rel="noopener noreferrer">
+                      {group.name}
+                    </a>
+                  </h3>
+                  <p>{group.description}</p>
+                  <div className="keywords-container">
+                    {renderKeywords(group.keywords)}
+                  </div>
                 </div>
-              </div>
+                
+                {/* Insere anúncios a cada 6 grupos */}
+                {(index + 1) % 6 === 0 && (
+                  <AdsBanner count={2} />
+                )}
+              </React.Fragment>
             ))
           ) : (
             !isLoading && <p>Nenhum grupo encontrado.</p>
